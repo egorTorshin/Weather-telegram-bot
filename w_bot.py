@@ -3,7 +3,7 @@ from aiogram.filters.command import Command
 import asyncio
 import requests
 
-BOT_TOKEN = '7239236509:AAFvIRtSIF34SIIEVe6ABXLI_e2N_sOD0QM'
+BOT_TOKEN = '{TELEGRAM_BOT_TOKEN}'
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
@@ -15,9 +15,9 @@ async def start_cmd(message: types.Message):
 
 @dp.message(F.text)
 async def get_weather(message: types.Message):
-    city = message.text
+    city_name = message.text
     try:
-        url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&lang=ru&appid=dcbc9c3857e22b64862636d8d596a986'
+        url = f'http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={API_KEY}'
         weather_data = requests.get(url).json()
 
         temp = round(weather_data['main']['temp'], 1)
@@ -26,7 +26,7 @@ async def get_weather(message: types.Message):
         clouds = weather_data['weather'][0]['description']
         humidity = weather_data['main']['humidity']
 
-        await message.answer(f'Погода в городе {city}:\n'
+        await message.answer(f'Погода в городе {city_name}:\n'
                              f' Температура воздуха:  {temp}°C\n'
                              f' Ощущается как:  {feels_like}°C\n'
                              f' Ветер:  {wind} м/с\n'
@@ -34,7 +34,7 @@ async def get_weather(message: types.Message):
                              f' Туманность:  {humidity}%'
                              )
     except KeyError:
-        await message.answer(f'Не удалось определить город: {city}')
+        await message.answer(f'Не удалось определить город: {city_name}')
 
 
 async def main():
